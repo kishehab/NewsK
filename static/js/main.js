@@ -23,8 +23,7 @@ document.getElementById('userForm').addEventListener('submit', async function (e
     });
     
     const result = await response.json();
-    alert(result.message);
-    
+    showTost("Add user", result.message)
     // Refresh the user list
     listUsers();
 });
@@ -48,6 +47,16 @@ async function listUsers() {
     });
 }
 
+function showTost(title, message){
+
+    var toastElement = document.getElementById('liveToast');
+
+    document.getElementById('toast-title').innerHTML = title;
+    document.getElementById('toast-message').innerHTML = message;    
+    
+    var toast = new bootstrap.Toast(toastElement);
+    toast.show();
+}
 // List users when the page loads
 listUsers();
 };
