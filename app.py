@@ -1,5 +1,8 @@
 from flask import Flask, request, jsonify, render_template
 from tinydb import TinyDB, Query
+from news_category import NewsCategory
+import json
+
 
 app = Flask(__name__)
 
@@ -30,6 +33,19 @@ def list_users():
     users = db.all()
     return jsonify(users)
 
+@app.route('/get_category', methods=['GET'])
+def get_category():
+    # Example usage:
+    file_path = 'datasets/MINDsmall_train/news.tsv'
+    news_category = NewsCategory(file_path)
+    category_mapping = news_category.get_category_mapping()
+    # Convert DataFrame to a dictionary (or you can use 'records' for a list of dictionaries)
+    df_dict = category_mapping.to_dict(orient='records')
+
+    # Now df_dict is JSON serializable
+    json_data = json.dumps(df_dict, indent=4)
+    # Display the category mapping
+    return jsonify(df_dict)
 
 if __name__ == '__main__':
     app.run(debug=True)
