@@ -10,6 +10,9 @@
     />
         <!-- Skeleton Loader CSS -->
         <style>
+                  .selected {
+            background-color: #28a745 !important; /* Green for selected */
+        }
           .skeleton {
               display: inline-block;
               width: 100px;
@@ -43,18 +46,15 @@
   </head>
   <body>
     <div class="container">
-      <h1>Categories and Subcategories</h1>
-      <!-- Skeleton Loader -->
-      <div id="skeleton-container" class="skeleton-container">
-          <div class="skeleton"></div>
-          <div class="skeleton"></div>
-          <div class="skeleton"></div>
-          <div class="skeleton"></div>
-      </div>
+      <h1>Categories</h1>
       
-      <!-- Container to hold the badges -->
-      <div id="badge-container" class="my-3 d-none"></div>
+      <!-- Container to hold the category badges -->
+      <div id="category-container" class="my-3"></div>
+
+      <!-- Container to hold the subcategory badges after clicking a category -->
+      <div id="subcategory-container" class="my-3 d-none"></div>
   </div>
+
     <!-- Toast structure -->
     <div class="toast-container position-fixed bottom-0 end-0 p-3">
       <div
