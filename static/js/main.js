@@ -63,7 +63,7 @@ window.onload = function () {
     categoryContainer.innerHTML = ""; // Clear the container
     categoryManager.categories.forEach((category) => {
       const categoryBadge = document.createElement("span");
-      categoryBadge.className = "badge bg-primary m-2 px-3 category-badge"; // Bootstrap badge
+      categoryBadge.className = "badge bg-primary m-2 px-4 category-badge"; // Bootstrap badge
       categoryBadge.textContent = category.name;
       // Create a span for the selected subcategory counter
       const counterBadge = document.createElement("span");
@@ -76,8 +76,11 @@ window.onload = function () {
       });
       // Append the category badge and counter to the container
       categoryBadge.appendChild(counterBadge);
+      // hide if 0
+      if (counterBadge.textContent == 0) {
+        counterBadge.style.display = "none";
+      }
       categoryContainer.appendChild(categoryBadge);
-      
     });
   }
   // Function to display subcategories for the selected category
@@ -102,16 +105,27 @@ window.onload = function () {
         this.classList.toggle("selected");
         // Update the subcategory counter
         counterBadge.textContent = `${category.getSelectedSubcategoryCount()}`;
-        // Log the selected category and subcategories
-        console.log(
-          "Selected category:",
-          categoryManager.getSelectedCategoryInfo()
-        );
+        // unhide if selected
+        if (counterBadge.textContent > 0) {
+          counterBadge.style.display = "";
+        }
       });
       // Append the subcategory badge to the container
       subcategoryContainer.appendChild(subCategoryBadge);
     });
   }
+  // NEW FUNCTION: Fetch and log all selected categories and subcategories
+  function getSelectedCategoriesAndSubcategories() {
+    const selectedData = categoryManager.getAllSelectedCategories();
+    console.log("All selected categories and subcategories:", selectedData);
+    return selectedData;
+  }
+
+  // Add a button to fetch all selected categories and subcategories
+document.getElementById('getSelectedButton').addEventListener('click', () => {
+  const selectedCategories = getSelectedCategoriesAndSubcategories();
+  console.log(selectedCategories);
+});
   // Fetch categories and initialize the page
   get_category().then(function (response) {
     if (response) {

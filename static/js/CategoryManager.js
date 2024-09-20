@@ -41,4 +41,13 @@ export class CategoryManager {
             selectedSubcategories: this.selectedCategory.getSelectedSubcategories()
         };
     }
+    // NEW FUNCTION: Get all selected categories along with their selected subcategories
+    getAllSelectedCategories() {
+        return this.categories
+            .map(category => ({
+                category: category.name,
+                selectedSubcategories: category.getSelectedSubcategories()
+            }))
+            .filter(category => category.selectedSubcategories.length > 0); // Only return categories with selected subcategories
+    }
 }

@@ -43,3 +43,7 @@
 .counter-badge{
     font-size: 11px;
 }
+
+#getSelectedButton{
+  border-radius: 20px;
+}
