@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,75 +8,54 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
-        <!-- Skeleton Loader CSS -->
-        <style>
-                  .selected {
-            background-color: #28a745 !important; /* Green for selected */
-        }
-          .skeleton {
-              display: inline-block;
-              width: 100px;
-              height: 20px;
-              background-color: #e0e0e0;
-              margin: 5px;
-              border-radius: 4px;
-              animation: shimmer 1.5s infinite;
-          }
-  
-          .skeleton-container {
-              display: flex;
-              flex-wrap: wrap;
-          }
-  
-          @keyframes shimmer {
-              0% {
-                  background-position: -200px 0;
-              }
-              100% {
-                  background-position: 200px 0;
-              }
-          }
-  
-          .skeleton-container .skeleton {
-              background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-              background-size: 200% 100%;
-          }
-      </style>
-    <title>My Flask App</title>
+    <link
+    href="static/css/main.css"
+    rel="stylesheet"
+  />
+  <link
+  href="static/css/bootstrap_helper.css"
+  rel="stylesheet"
+/>
+  <link
+  href="static/css/docs.css"
+  rel="stylesheet"
+/>
+
+    <title>NewsK | AI News Recommendation</title>
   </head>
   <body>
-    <div class="container">
-      <h1>Categories</h1>
-      
-      <!-- Container to hold the category badges -->
-      <div id="category-container" class="my-3"></div>
-
-      <!-- Container to hold the subcategory badges after clicking a category -->
-      <div id="subcategory-container" class="my-3 d-none"></div>
-  </div>
-
-    <!-- Toast structure -->
-    <div class="toast-container position-fixed bottom-0 end-0 p-3">
-      <div
-        id="liveToast"
-        class="toast"
-        role="alert"
-        aria-live="assertive"
-        aria-atomic="true"
-      >
-        <div class="toast-header">
-          <strong class="me-auto" id="toast-title">Title</strong>
-          <small>Just now</small>
-          <button
-            type="button"
-            class="btn-close"
-            data-bs-dismiss="toast"
-            aria-label="Close"
-          ></button>
+    <nav class="navbar navbar-expand-lg bd-navbar sticky-top">
+      <nav class="container-xxl bd-gutter flex-wrap flex-lg-nowrap" aria-label="Main navigation">
+        <div class="d-lg-none" style="width: 4.25rem;"></div>
+      <a class="navbar-brand p-0 me-0 me-lg-2" href="/" aria-label="Bootstrap">
+        <img src="static/img/NewsK-logo.png" height="32" class="white-image">
+      </a>
+      <div class="offcanvas-lg offcanvas-end flex-grow-1" tabindex="-1" id="bdNavbar" aria-labelledby="bdNavbarOffcanvasLabel" data-bs-scroll="true">
+        <div class="offcanvas-header px-4 pb-0">
+          <h5 class="offcanvas-title text-white" id="bdNavbarOffcanvasLabel">Bootstrap</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close" data-bs-target="#bdNavbar"></button>
         </div>
-        <div class="toast-body" id="toast-message">Message.</div>
+        <div class="offcanvas-body p-4 pt-0 p-lg-0">
+          <hr class="d-lg-none text-white-50">
+          <hr class="d-lg-none text-white-50">
+        </div>
+      </div>
+    </nav>
+    </nav>
+    <div class="bd-masthead mb-3" id="content" style="min-height: 400px;">
+      <div class="container-xxl bd-gutter">
+<div class="col-md-8 mx-auto text-center">
+  <img src="static/img/NewsK-logo.png"  height="300" alt="Bootstrap" class="d-none d-sm-block mx-auto mb-3">
+  <div style="margin-top: -100px; font-size: 34px; color: wheat; --dm-inline-color: #fddca0;" data-dm-inline-color="">NewsK</div>
+  <h1 class="mb-5 fw-semibold lh-1">Your News, Your Way.</h1>
+        <!-- Container to hold the category badges -->
+        <div id="category-container" class="my-3"></div>
+        <!-- Container to hold the subcategory badges after clicking a category -->
+        <div id="subcategory-container" class="my-3 d-none"></div>
+</div>
       </div>
     </div>
+  </div>
     <!-- Bootstrap JS and dependencies (Popper.js and Bootstrap JS) -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>

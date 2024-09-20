@@ -1,7 +1,9 @@
 from flask import Flask, request, jsonify, render_template
-from tinydb import TinyDB, Query
 from news_category import NewsCategory
 import json
+import sys
+sys.path.append("c:\\python310\\lib\\site-packages")
+from tinydb import TinyDB, Query
 
 
 app = Flask(__name__)
@@ -11,9 +13,7 @@ db = TinyDB('db.json')
 
 @app.route('/')
 def home():
-    user = 'Alice'
-    is_logged_in = True
-    return render_template('index.html', user=user, is_logged_in=is_logged_in)
+    return render_template('index.html')
 
 @app.route('/add_user', methods=['POST'])
 def add_user():

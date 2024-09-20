@@ -1,0 +1,41 @@
+.white-image {
+  filter: brightness(0) invert(1); /* Makes the image solid white */
+}
+
+.selected {
+  background-color: #D55A90 !important;
+}
+
+.category-badge {
+  border-radius: 18px;
+  min-width: 120px;
+  min-height: 30px;
+  text-transform: capitalize;
+  display: inline-block;
+  text-align: center;
+  vertical-align: middle;
+  line-height: 1.5; /* Adjust as per badge size */
+  background-image: linear-gradient(
+    rgba(var(--bd-violet-rgb), 1),
+    rgba(var(--bd-violet-rgb), 0.95)
+  );
+}
+.category-badge:hover {
+  background-color: #66b2ff; /* Lighter color on hover */
+  cursor: pointer; /* Change to pointer on hover */
+}
+
+.subcategory-badge {
+  border-radius: 18px;
+  min-width: 120px;
+  min-height: 30px;
+  text-transform: capitalize;
+  display: inline-block;
+  text-align: center;
+  vertical-align: middle;
+  line-height: 1.5; /* Adjust as per badge size */
+  /* background-color: #fbe2ab !important; */
+}
+.subcategory-badge {
+    cursor: pointer; /* Change to pointer on hover */
+}
