@@ -20,18 +20,10 @@ window.onload = function () {
       userList.appendChild(li);
     });
   }
-  function showTost(title, message) {
-    var toastElement = document.getElementById("liveToast");
-    document.getElementById("toast-title").innerHTML = title;
-    document.getElementById("toast-message").innerHTML = message;
-    var toast = new bootstrap.Toast(toastElement);
-    toast.show();
-  }
+
   // Fetch the categories and sub-categories from the server
   async function get_category() {
     try {
-      // Show the skeleton loader
-      showSkeletonLoader();
       const response = await fetch("/get_category", {
         method: "GET",
       });
@@ -45,24 +37,7 @@ window.onload = function () {
       alert("Failed to fetch categories");
     } finally {
       // Hide the skeleton loader
-      hideSkeletonLoader();
     }
-  }
-  // Function to show the skeleton loader
-  function showSkeletonLoader() {
-    const skeletonContainer = document.getElementById("skeleton-container");
-    const badgeContainer = document.getElementById("badge-container");
-    // Show skeleton loader and hide badge container
-    skeletonContainer.classList.remove("d-none");
-    badgeContainer.classList.add("d-none");
-  }
-  // Function to hide the skeleton loader
-  function hideSkeletonLoader() {
-    const skeletonContainer = document.getElementById("skeleton-container");
-    const badgeContainer = document.getElementById("badge-container");
-    // Hide skeleton loader and show badge container
-    skeletonContainer.classList.add("d-none");
-    badgeContainer.classList.remove("d-none");
   }
   // main.js
   const categoryManager = new CategoryManager();
@@ -93,15 +68,16 @@ window.onload = function () {
       // Create a span for the selected subcategory counter
       const counterBadge = document.createElement("span");
       counterBadge.className = "badge bg-light text-dark m-2";
-      counterBadge.textContent = `(${category.getSelectedSubcategoryCount()})`; // Show the initial count as 0
+      counterBadge.textContent = `${category.getSelectedSubcategoryCount()}`; // Show the initial count as 0
       // Add event listener to handle category click
       categoryBadge.addEventListener("click", () => {
         categoryManager.setSelectedCategory(category.name); // Set selected category
         displaySubcategories(category, counterBadge); // Pass the counterBadge to update the count later
       });
       // Append the category badge and counter to the container
+      categoryBadge.appendChild(counterBadge);
       categoryContainer.appendChild(categoryBadge);
-      categoryContainer.appendChild(counterBadge);
+      
     });
   }
   // Function to display subcategories for the selected category
@@ -125,7 +101,7 @@ window.onload = function () {
         // Toggle visual indication of selection
         this.classList.toggle("selected");
         // Update the subcategory counter
-        counterBadge.textContent = `(${category.getSelectedSubcategoryCount()})`;
+        counterBadge.textContent = `${category.getSelectedSubcategoryCount()}`;
         // Log the selected category and subcategories
         console.log(
           "Selected category:",
