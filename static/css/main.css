@@ -20,6 +20,20 @@
     rgba(var(--bd-violet-rgb), 0.95)
   );
 }
+
+.category-badge-tag {
+  border-radius: 24px;
+  text-transform: capitalize;
+  display: inline-block;
+  text-align: center;
+  vertical-align: middle;
+  line-height: 1.5; /* Adjust as per badge size */
+  /* background-image: linear-gradient(
+    rgba(var(--bd-violet-rgb), 1),
+    rgba(var(--bd-violet-rgb), 0.95)
+  ); */
+}
+
 .category-badge:hover {
   background-color: #66b2ff; /* Lighter color on hover */
   cursor: pointer; /* Change to pointer on hover */
@@ -47,11 +61,6 @@
 
 #getSelectedButton{
   border-radius: 20px;
-}
-
-/* Ensure that the card has a fixed height */
-.card {
-  /*height: 350px !important;  Set a fixed height for the card */
 }
 
 .card-title {

@@ -196,6 +196,7 @@ window.onload = function () {
                     news.abstract,
                     maxLengthAbstract
                   )}</p>
+                  <span class="badge text-bg-secondary px-4 category-badge-tag">${news.category}</span>
               </div>
               <div class="card-footer"><a href="${
                 news.url
