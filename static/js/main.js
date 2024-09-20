@@ -55,7 +55,7 @@ window.onload = function () {
       categoryBadge.textContent = category.name;
       // Create a span for the selected subcategory counter
       const counterBadge = document.createElement("span");
-      counterBadge.className = "badge bg-light text-dark m-2 counter-badge";
+      counterBadge.className = "bg-light text-dark m-2 px-1 counter-badge";
       counterBadge.textContent = `${category.getSelectedSubcategoryCount()}`; // Show the initial count as 0
       // Add event listener to handle category click
       categoryBadge.addEventListener("click", () => {
@@ -166,7 +166,11 @@ window.onload = function () {
     newsContainer.innerHTML = ""; // Clear any previous news
     if (newsData.length === 0) {
       newsContainer.innerHTML =
-        "<p>No news articles found for the selected categories.</p>";
+        `
+        <div class="alert alert-warning w-100 text-center" role="alert">
+          No news articles found for the selected categories.
+        </div>
+        `;
       return;
     }
     let row;
