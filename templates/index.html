@@ -20,10 +20,10 @@
   href="static/css/docs.css"
   rel="stylesheet"
 />
-
     <title>NewsK | AI News Recommendation</title>
   </head>
   <body>
+      <!-- Header -->
     <nav class="navbar navbar-expand-lg bd-navbar sticky-top">
       <nav class="container-xxl bd-gutter flex-wrap flex-lg-nowrap" aria-label="Main navigation">
         <div class="d-lg-none" style="width: 4.25rem;"></div>
@@ -42,6 +42,7 @@
       </div>
     </nav>
     </nav>
+    <!-- Content -->
     <div class="bd-masthead mb-3" id="content" style="min-height: 400px;">
       <div class="container-xxl bd-gutter">
 <div class="col-md-8 mx-auto text-center">
@@ -51,14 +52,22 @@
   <div class="my-3">
     Select your favorite categories and subcategories to discover personalized news tailored just for you.
   </div>
+  <span id="categorySpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
         <!-- Container to hold the category badges -->
-        <div id="category-container" class="my-3"></div>
+        <div id="category-container" class="my-3">
+        </div>
         <!-- Container to hold the subcategory badges after clicking a category -->
         <div id="subcategory-container" class="my-3 d-none"></div>
         <!--Add a button to trigger the new function in your HTML: -->
-        <button id="getSelectedButton" class="btn btn-warning mt-3 px-5">See Personalized News</button>
-
-</div>
+        <button id="getSelectedButton" class="btn btn-warning mt-3 px-5">
+          <span id="buttonSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+          See Personalized News
+        </button>
+  <!-- Personlized news -->
+  <div id='newsContainer' class=" mt-4 card-group text-start">
+    </div>
+  </div>
+      </div>
       </div>
     </div>
   </div>

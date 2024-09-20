@@ -20,10 +20,15 @@ window.onload = function () {
       userList.appendChild(li);
     });
   }
-
+  // main.js
+  const categoryManager = new CategoryManager();
   // Fetch the categories and sub-categories from the server
   async function get_category() {
+    //categorySpinner
+    const categorySpinner = document.getElementById("categorySpinner");
     try {
+      // Show the spinner
+      categorySpinner.classList.remove("d-none");
       const response = await fetch("/get_category", {
         method: "GET",
       });
@@ -36,25 +41,8 @@ window.onload = function () {
       console.error("Error fetching category:", error);
       alert("Failed to fetch categories");
     } finally {
-      // Hide the skeleton loader
-    }
-  }
-  // main.js
-  const categoryManager = new CategoryManager();
-  // Fetch the categories and sub-categories from the server
-  async function get_category() {
-    try {
-      const response = await fetch("/get_category", {
-        method: "GET",
-      });
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.error("Error fetching category:", error);
-      alert("Failed to fetch categories");
+      // Hide spinner
+      categorySpinner.classList.add("d-none");
     }
   }
   // Function to display categories
@@ -120,12 +108,12 @@ window.onload = function () {
     console.log("All selected categories and subcategories:", selectedData);
     return selectedData;
   }
-
   // Add a button to fetch all selected categories and subcategories
-document.getElementById('getSelectedButton').addEventListener('click', () => {
-  const selectedCategories = getSelectedCategoriesAndSubcategories();
-  console.log(selectedCategories);
-});
+  document.getElementById("getSelectedButton").addEventListener("click", () => {
+    const selectedCategories = getSelectedCategoriesAndSubcategories();
+    fetchRecentNews(selectedCategories);
+    console.log(selectedCategories);
+  });
   // Fetch categories and initialize the page
   get_category().then(function (response) {
     if (response) {
@@ -135,6 +123,92 @@ document.getElementById('getSelectedButton').addEventListener('click', () => {
       displayCategories(); // Display categories
     }
   });
+  // Function to call the backend and get recent news based on the selected categories and subcategories
+  // Function to call the backend and get recent news based on the selected categories and subcategories
+  async function fetchRecentNews(selections) {
+    const button = document.getElementById("getSelectedButton");
+    const spinner = document.getElementById("buttonSpinner");
+    try {
+      // Show the spinner
+      spinner.classList.remove("d-none");
+      button.setAttribute("disabled", true); // Disable the button to prevent multiple clicks
+      const response = await fetch("/get_recent_news", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(selections), // Send the list of selected categories and subcategories
+      });
+      // Check if the response status is OK (status code 200-299)
+      if (!response.ok) {
+        const errorText = await response.text(); // Try to read the response text for debugging
+        console.error("Server returned an error:", errorText);
+        throw new Error(`Error: ${response.statusText}`);
+      }
+      // Try to parse the JSON response
+      const newsData = await response.json();
+      console.log("Recent News:", newsData);
+      // Display the news on the page
+      displayNews(newsData);
+    } catch (error) {
+      console.error("Failed to fetch recent news:", error);
+    } finally {
+      // Hide the spinner and re-enable the button
+      spinner.classList.add("d-none");
+      button.removeAttribute("disabled");
+    }
+  }
+  // Function to display the retrieved news as Bootstrap cards, with 3 cards per row
+  function displayNews(newsData) {
+    var maxLengthTtile = 100;
+    var maxLengthAbstract = 150;
+    const newsContainer = document.getElementById("newsContainer");
+    newsContainer.innerHTML = ""; // Clear any previous news
+    if (newsData.length === 0) {
+      newsContainer.innerHTML =
+        "<p>No news articles found for the selected categories.</p>";
+      return;
+    }
+    let row;
+    newsData.forEach((news, index) => {
+      // Every time we start a new row (index % 3 === 0), create a new row div
+      if (index % 3 === 0) {
+        row = document.createElement("div");
+        row.className = "row mb-3"; // Bootstrap row with margin-bottom
+        newsContainer.appendChild(row);
+      }
+      // Create a new card for each news item
+      const card = document.createElement("div");
+      card.className = "col-md-4"; // Each card should take 4 columns (1/3 of a row)
+      // Card inner HTML with a fixed height and text truncation for abstract
+      card.innerHTML = `
+          <div class="card h-100">
+              <div class="card-body">
+                  <h5 class="card-title">${truncateText(
+                    news.title,
+                    maxLengthTtile
+                  )}</h5>
+                  <p class="card-text card-abstract">${truncateText(
+                    news.abstract,
+                    maxLengthAbstract
+                  )}</p>
+              </div>
+              <div class="card-footer"><a href="${
+                news.url
+              }" class="btn" target="_blank">Read more</a>
+                  </div>
+          </div>
+      `;
+      // Append the card to the current row
+      row.appendChild(card);
+    });
+  }
+  function truncateText(text, max) {
+    if (text.length > max) {
+      return text.substring(0, max) + "...";
+    }
+    return text;
+  }
   // Retrieve or create and return the unique number
   const uniqueNumber = getOrCreateUniqueNumber();
   console.log("Unique Number:", uniqueNumber);

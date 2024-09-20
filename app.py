@@ -47,6 +47,43 @@ def get_category():
     # Display the category mapping
     return jsonify(df_dict)
 
+# NEW ENDPOINT: Receive selection and return the 10 most recent news items
+@app.route('/get_recent_news', methods=['POST'])
+def get_recent_news():
+    # Example usage of NewsCategory class
+    file_path = 'datasets/MINDsmall_train/news.tsv'
+    news_category = NewsCategory(file_path)
+
+    # Get data from the request (JSON body)
+    data = request.json
+
+    # Initialize a list to collect all recent news for each category
+    all_recent_news = []
+
+    # Iterate over the list of categories and their selected subcategories
+    for selection in data:
+        selected_category = selection.get('category')
+        selected_subcategories = selection.get('selectedSubcategories')
+
+        # Validate input for each category
+        if not selected_category or not selected_subcategories:
+            continue
+
+        # Retrieve recent news for the current category and subcategories
+        recent_news = news_category.get_recent_news(selected_category, selected_subcategories)
+
+        # Handle NaN values by replacing them with None (null in JSON)
+        recent_news = recent_news.fillna(value='')
+
+        # Convert the result to a JSON-serializable format
+        news_json = recent_news.to_dict(orient='records')
+
+        # Append the result to the all_recent_news list
+        all_recent_news.extend(news_json)
+
+    # Return all the collected recent news as JSON
+    return jsonify(all_recent_news)
+
 if __name__ == '__main__':
     app.run(debug=True)
 

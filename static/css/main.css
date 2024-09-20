@@ -47,3 +47,13 @@
 #getSelectedButton{
   border-radius: 20px;
 }
+
+/* Ensure that the card has a fixed height */
+.card {
+  /*height: 350px !important;  Set a fixed height for the card */
+}
+
+.card-title {
+  font-size: 1.1rem !important;
+  color: white !important; 
+}
