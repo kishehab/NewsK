@@ -128,6 +128,8 @@ window.onload = function () {
   async function fetchRecentNews(selections) {
     const button = document.getElementById("getSelectedButton");
     const spinner = document.getElementById("buttonSpinner");
+    const newsContainer = document.getElementById('newsContainer');
+
     try {
       // Show the spinner
       spinner.classList.remove("d-none");
@@ -150,6 +152,13 @@ window.onload = function () {
       console.log("Recent News:", newsData);
       // Display the news on the page
       displayNews(newsData);
+     // Scroll to the news section with an offset to show more space at the top
+        const offset = 100; // Adjust this value as needed (e.g., 100px)
+        const newsContainerPosition = newsContainer.getBoundingClientRect().top + window.pageYOffset - offset;
+
+        // Scroll to the calculated position with a smooth effect
+        window.scrollTo({ top: newsContainerPosition, behavior: 'smooth' });
+
     } catch (error) {
       console.error("Failed to fetch recent news:", error);
     } finally {
