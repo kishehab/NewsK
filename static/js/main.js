@@ -63,11 +63,11 @@ window.onload = function () {
     categoryContainer.innerHTML = ""; // Clear the container
     categoryManager.categories.forEach((category) => {
       const categoryBadge = document.createElement("span");
-      categoryBadge.className = "badge bg-primary m-2 category-badge"; // Bootstrap badge
+      categoryBadge.className = "badge bg-primary m-2 px-3 category-badge"; // Bootstrap badge
       categoryBadge.textContent = category.name;
       // Create a span for the selected subcategory counter
       const counterBadge = document.createElement("span");
-      counterBadge.className = "badge bg-light text-dark m-2";
+      counterBadge.className = "badge bg-light text-dark m-2 counter-badge";
       counterBadge.textContent = `${category.getSelectedSubcategoryCount()}`; // Show the initial count as 0
       // Add event listener to handle category click
       categoryBadge.addEventListener("click", () => {
