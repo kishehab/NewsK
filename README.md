@@ -26,10 +26,7 @@ This web application leverages state-of-the-art AI and NLP to offer personalized
 4. **Content-Based Recommendations**:
    - Using embeddings from models like SentenceTransformers for English and AraBERT for Arabic, the platform calculates cosine similarity to recommend articles.
 
-5. **Time-Relevance Filtering**:
-   - News articles are prioritized based on their publication date, ensuring that users are exposed to the most relevant and recent content.
-
-6. **User Behavior Tracking and Recommendations**:
+5. **User Behavior Tracking and Recommendations**:
    - The platform keeps track of the user's interaction to improve future recommendations through a feedback loop.
 
 ## Installation
