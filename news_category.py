@@ -44,4 +44,4 @@ class NewsCategory:
         recent_news = sorted_df.head(10)
 
         # Return relevant columns (e.g., 'title', 'abstract', 'url')
-        return recent_news[['title', 'abstract', 'url','category']]
+        return recent_news[['ID','title', 'abstract', 'url','category']]

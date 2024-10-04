@@ -4,6 +4,11 @@ import { getOrCreateUniqueNumber } from "./cookies.js";
 import { CategoryManager } from "./CategoryManager.js"; // Import CategoryManager
 window.onload = function () {
   console.log("Page has fully loaded!");
+  // initiate news modal
+  const newsModal = new bootstrap.Modal('#newsModal');
+  var globalNewsData = [];
+  const maxLengthTtile = 100;
+  const maxLengthAbstract = 150;
   // Function to list all users
   async function listUsers() {
     const response = await fetch("/list_users", {
@@ -128,7 +133,7 @@ window.onload = function () {
   async function fetchRecentNews(selections) {
     const button = document.getElementById("getSelectedButton");
     const spinner = document.getElementById("buttonSpinner");
-    const newsContainer = document.getElementById('newsContainer');
+    const newsContainer = document.getElementById("newsContainer");
 
     try {
       // Show the spinner
@@ -149,16 +154,16 @@ window.onload = function () {
       }
       // Try to parse the JSON response
       const newsData = await response.json();
-      console.log("Recent News:", newsData);
+      globalNewsData = newsData;
       // Display the news on the page
       displayNews(newsData);
-     // Scroll to the news section with an offset to show more space at the top
-        const offset = 100; // Adjust this value as needed (e.g., 100px)
-        const newsContainerPosition = newsContainer.getBoundingClientRect().top + window.pageYOffset - offset;
+      // Scroll to the news section with an offset to show more space at the top
+      const offset = 100; // Adjust this value as needed (e.g., 100px)
+      const newsContainerPosition =
+        newsContainer.getBoundingClientRect().top + window.pageYOffset - offset;
 
-        // Scroll to the calculated position with a smooth effect
-        window.scrollTo({ top: newsContainerPosition, behavior: 'smooth' });
-
+      // Scroll to the calculated position with a smooth effect
+      window.scrollTo({ top: newsContainerPosition, behavior: "smooth" });
     } catch (error) {
       console.error("Failed to fetch recent news:", error);
     } finally {
@@ -169,13 +174,10 @@ window.onload = function () {
   }
   // Function to display the retrieved news as Bootstrap cards, with 3 cards per row
   function displayNews(newsData) {
-    var maxLengthTtile = 100;
-    var maxLengthAbstract = 150;
     const newsContainer = document.getElementById("newsContainer");
     newsContainer.innerHTML = ""; // Clear any previous news
     if (newsData.length === 0) {
-      newsContainer.innerHTML =
-        `
+      newsContainer.innerHTML = `
         <div class="alert alert-warning w-100 text-center" role="alert">
           No news articles found for the selected categories.
         </div>
@@ -205,18 +207,92 @@ window.onload = function () {
                     news.abstract,
                     maxLengthAbstract
                   )}</p>
-                  <span class="badge text-bg-secondary px-4 category-badge-tag">${news.category}</span>
+                  <span class="badge text-bg-secondary px-4 category-badge-tag">${
+                    news.category
+                  }</span>
               </div>
-              <div class="card-footer"><a href="${
-                news.url
-              }" class="btn" target="_blank">Read more</a>
-                  </div>
+              <div class="card-footer">
+                <button type="button" class="btn btn-news-read-more" data-news-id="${
+                  news.ID
+                }">Read more</button>
+              </div>
           </div>
       `;
       // Append the card to the current row
       row.appendChild(card);
     });
+    // Function to attach click handlers to all buttons with class 'btn-news-read-more'
+    document.querySelectorAll(".btn-news-read-more").forEach(function (button) {
+      button.addEventListener("click", function(){
+        displayNewsModal(button);
+      });
+    });
   }
+  // fucntion to display the news in modal
+  function displayNewsModal(newsItem){
+    prepareNewsModal(newsItem);
+    newsModal.show();
+  }
+  // function to extract news detail and update modal html
+  function prepareNewsModal(newsItem){
+    // Get the data-user-id attribute from the clicked button
+    const newsId = newsItem.getAttribute("data-news-id");
+    const news = getNewsById(newsId);
+    document.getElementById("modalNewsTitle").innerHTML = news.title;
+    document.getElementById("modalNewsAbstract").innerHTML = news.abstract;
+    // populate the ai recommendation
+    getAiRecommendedNews(newsId)
+  }
+  // function to get news detail from the initial news list
+  function getNewsById(newsId){
+    return globalNewsData.find(function(obj) {
+      return obj.ID === newsId;
+  });
+  }
+  // function to get the ai recommeded news based on id of news
+  function getAiRecommendedNews(newsId){
+    // Shuffle the array using sort and Math.random()
+    let shuffledArray = globalNewsData.sort(() => 0.5 - Math.random());
+    updateAiRecommendationModalSection(shuffledArray.slice(0, 3));
+  }
+  // function that update model section with ai remmended news
+  function updateAiRecommendationModalSection(getAiRecommendedNewsList){
+    const container = document.getElementById("aiRecommendedNewsContainer");
+    container.innerHTML = '';
+    getAiRecommendedNewsList.forEach(news => {
+      container.innerHTML += `
+                <div class="col-md-4">
+              <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">${truncateText(
+                      news.title,
+                      maxLengthTtile
+                    )}</h5>
+                    <p class="card-text card-abstract">${truncateText(
+                      news.abstract,
+                      maxLengthAbstract
+                    )}</p>
+                    <span class="badge text-bg-secondary px-4 category-badge-tag">${
+                      news.category
+                    }</span>
+                </div>
+                <div class="card-footer">
+                  <button type="button" class="btn btn-news-read-more" data-news-id="${
+                    news.ID
+                  }">Read more</button>
+                </div>
+            </div>
+            </div>
+      `
+    });
+     // Function to attach click handlers to all buttons with class 'btn-news-read-more'
+     document.querySelectorAll(".btn-news-read-more").forEach(function (button) {
+      button.addEventListener("click", function(){
+        displayNewsModal(button);
+      });
+    });
+  }
+  // function to truncate text based on max number of chars
   function truncateText(text, max) {
     if (text.length > max) {
       return text.substring(0, max) + "...";
