@@ -1,4 +1,4 @@
-gfrom flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template
 from news_category import NewsCategory
 import json
 import sys
