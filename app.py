@@ -2,11 +2,15 @@ from flask import Flask, request, jsonify, render_template
 from news_category import NewsCategory
 import json
 import sys
+from recommender import Recommender
+
 sys.path.append("c:\\python310\\lib\\site-packages")
-from tinydb import TinyDB, Query
+from tinydb import TinyDB, Query # type: ignore
 
 
 app = Flask(__name__)
+
+recommender = Recommender()
 
 # Initialize TinyDB (stores data in a JSON file)
 db = TinyDB('db.json')
