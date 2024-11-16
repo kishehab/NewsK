@@ -40,7 +40,7 @@ def list_users():
 @app.route('/get_category', methods=['GET'])
 def get_category():
     # Example usage:
-    file_path = 'datasets/MINDsmall_train/news.tsv'
+    file_path = 'datasets/MINDsmall_train/train_news.tsv'
     news_category = NewsCategory(file_path)
     category_mapping = news_category.get_category_mapping()
     # Convert DataFrame to a dictionary (or you can use 'records' for a list of dictionaries)
@@ -55,7 +55,7 @@ def get_category():
 @app.route('/get_recent_news', methods=['POST'])
 def get_recent_news():
     # Example usage of NewsCategory class
-    file_path = 'datasets/MINDsmall_train/news.tsv'
+    file_path = 'datasets/MINDsmall_train/train_news.tsv'
     news_category = NewsCategory(file_path)
 
     # Get data from the request (JSON body)
