@@ -40,7 +40,7 @@ def list_users():
 @app.route('/get_category', methods=['GET'])
 def get_category():
     # Example usage:
-    file_path = 'datasets/MINDsmall_train/train_news.tsv'
+    file_path = 'datasets/MINDsmall_dev/dev_news.tsv'
     news_category = NewsCategory(file_path)
     category_mapping = news_category.get_category_mapping()
     # Convert DataFrame to a dictionary (or you can use 'records' for a list of dictionaries)
@@ -55,7 +55,7 @@ def get_category():
 @app.route('/get_recent_news', methods=['POST'])
 def get_recent_news():
     # Example usage of NewsCategory class
-    file_path = 'datasets/MINDsmall_train/train_news.tsv'
+    file_path = 'datasets/MINDsmall_dev/dev_news.tsv'
     news_category = NewsCategory(file_path)
 
     # Get data from the request (JSON body)
@@ -87,6 +87,26 @@ def get_recent_news():
 
     # Return all the collected recent news as JSON
     return jsonify(all_recent_news)
+
+@app.route('/get_similar_articles', methods=['POST'])
+def get_similar_articles():
+    try:
+        # Parse JSON input
+        data = request.get_json()
+        if 'article_id' not in data:
+            return jsonify({'error': 'Missing article_id in request'}), 400
+
+        article_id = data['article_id']
+
+        # Call the similarity function
+        similar_articles = recommender.get_similar_articles(article_id)
+
+        # Return the response as JSON
+        return jsonify({'article_id': article_id, 'similar_articles': similar_articles}), 200
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 400
+    except Exception as e:
+        return jsonify({'error': 'An unexpected error occurred', 'details': str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)

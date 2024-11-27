@@ -5,7 +5,7 @@ import { CategoryManager } from "./CategoryManager.js"; // Import CategoryManage
 window.onload = function () {
   console.log("Page has fully loaded!");
   // initiate news modal
-  const newsModal = new bootstrap.Modal('#newsModal');
+  const newsModal = new bootstrap.Modal("#newsModal");
   var globalNewsData = [];
   const maxLengthTtile = 100;
   const maxLengthAbstract = 150;
@@ -129,7 +129,6 @@ window.onload = function () {
     }
   });
   // Function to call the backend and get recent news based on the selected categories and subcategories
-  // Function to call the backend and get recent news based on the selected categories and subcategories
   async function fetchRecentNews(selections) {
     const button = document.getElementById("getSelectedButton");
     const spinner = document.getElementById("buttonSpinner");
@@ -223,43 +222,49 @@ window.onload = function () {
     });
     // Function to attach click handlers to all buttons with class 'btn-news-read-more'
     document.querySelectorAll(".btn-news-read-more").forEach(function (button) {
-      button.addEventListener("click", function(){
+      button.addEventListener("click", function () {
         displayNewsModal(button);
       });
     });
   }
   // fucntion to display the news in modal
-  function displayNewsModal(newsItem){
+  function displayNewsModal(newsItem) {
     prepareNewsModal(newsItem);
     newsModal.show();
   }
   // function to extract news detail and update modal html
-  function prepareNewsModal(newsItem){
+  function prepareNewsModal(newsItem) {
     // Get the data-user-id attribute from the clicked button
     const newsId = newsItem.getAttribute("data-news-id");
     const news = getNewsById(newsId);
     document.getElementById("modalNewsTitle").innerHTML = news.title;
     document.getElementById("modalNewsAbstract").innerHTML = news.abstract;
     // populate the ai recommendation
-    getAiRecommendedNews(newsId)
+    getAiRecommendedNews(newsId);
   }
   // function to get news detail from the initial news list
-  function getNewsById(newsId){
-    return globalNewsData.find(function(obj) {
+  function getNewsById(newsId) {
+    return globalNewsData.find(function (obj) {
       return obj.ID === newsId;
-  });
+    });
   }
   // function to get the ai recommeded news based on id of news
-  function getAiRecommendedNews(newsId){
-    // Shuffle the array using sort and Math.random()
-    let shuffledArray = globalNewsData.sort(() => 0.5 - Math.random());
-    updateAiRecommendationModalSection(shuffledArray.slice(0, 3));
+  async function getAiRecommendedNews(newsId) {
+    // get similar news from AI model
+    getSimilarArticles(newsId).then((similarArticles) => {
+      if (similarArticles) {
+        // add the to global news array
+        globalNewsData.push(...similarArticles);
+        updateAiRecommendationModalSection(similarArticles);
+      }
+    });
   }
   // function that update model section with ai remmended news
-  function updateAiRecommendationModalSection(getAiRecommendedNewsList){
+  function updateAiRecommendationModalSection(getAiRecommendedNewsList) {
     const container = document.getElementById("aiRecommendedNewsContainer");
-    container.innerHTML = '';
-    getAiRecommendedNewsList.forEach(news => {
+    container.innerHTML = "";
+    getAiRecommendedNewsList.forEach((news) => {
+      var similarity_score = Math.floor(news.similarity_score * 100) 
       container.innerHTML += `
                 <div class="col-md-4">
               <div class="card h-100">
@@ -275,6 +280,10 @@ window.onload = function () {
                     <span class="badge text-bg-secondary px-4 category-badge-tag">${
                       news.category
                     }</span>
+                    <div class="small mt-3">Similarity: (${similarity_score}%)</div>
+                    <div class="progress mt-1" role="progressbar" aria-label="Example 1px high" aria-valuenow="${similarity_score}" aria-valuemin="0" aria-valuemax="100" style="height: 1px">
+                      <div class="progress-bar" style="width: ${similarity_score}%"></div>
+                    </div>
                 </div>
                 <div class="card-footer">
                   <button type="button" class="btn btn-news-read-more" data-news-id="${
@@ -283,11 +292,11 @@ window.onload = function () {
                 </div>
             </div>
             </div>
-      `
+      `;
     });
-     // Function to attach click handlers to all buttons with class 'btn-news-read-more'
-     document.querySelectorAll(".btn-news-read-more").forEach(function (button) {
-      button.addEventListener("click", function(){
+    // Function to attach click handlers to all buttons with class 'btn-news-read-more'
+    document.querySelectorAll(".btn-news-read-more").forEach(function (button) {
+      button.addEventListener("click", function () {
         displayNewsModal(button);
       });
     });
@@ -298,6 +307,36 @@ window.onload = function () {
       return text.substring(0, max) + "...";
     }
     return text;
+  }
+
+  async function getSimilarArticles(articleId) {
+    const url = "/get_similar_articles"; // Adjust the URL to your server's address
+
+    const requestData = {
+      article_id: articleId,
+    };
+
+    try {
+      const response = await fetch(url, {
+        method: "POST", // POST method
+        headers: {
+          "Content-Type": "application/json", // Set the request header
+        },
+        body: JSON.stringify(requestData), // Send the JSON request body
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Error:", errorData);
+        return;
+      }
+
+      const data = await response.json();
+      console.log("Similar Articles:", data.similar_articles);
+      return data.similar_articles; // Return the similar articles if needed
+    } catch (error) {
+      console.error("Network error:", error);
+    }
   }
   // Retrieve or create and return the unique number
   const uniqueNumber = getOrCreateUniqueNumber();
