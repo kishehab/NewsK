@@ -3,7 +3,7 @@
 }
 
 .selected {
-  background-color: #D55A90 !important;
+  background-color: #d55a90 !important;
 }
 
 .category-badge {
@@ -15,10 +15,7 @@
   text-align: center;
   vertical-align: middle;
   line-height: 1.5; /* Adjust as per badge size */
-  background-image: linear-gradient(
-    rgba(var(--bd-violet-rgb), 1),
-    rgba(var(--bd-violet-rgb), 0.95)
-  );
+  background-color: rgba(var(--bd-violet-rgb), 1) !important;
 }
 
 .category-badge-tag {
@@ -51,23 +48,68 @@
   /* background-color: #fbe2ab !important; */
 }
 .subcategory-badge {
-    cursor: pointer; /* Change to pointer on hover */
+  cursor: pointer; /* Change to pointer on hover */
 }
 
-.counter-badge{
-    font-size: 11px;
-    border-radius: 4px;
+.counter-badge {
+  font-size: 11px;
+  border-radius: 4px;
 }
 
-#getSelectedButton{
+.ar-ctn-btn {
   border-radius: 20px;
 }
 
 .card-title {
   font-size: 1.1rem !important;
-  color: white !important; 
+  color: white !important;
 }
 
-.ai-icon{
+.ai-icon {
   height: 20px;
+}
+
+.form-check-input {
+  clear: left;
+}
+
+.form-switch.form-switch-lg {
+  /*margin-bottom: 1 rem;  JUST FOR STYLING PURPOSE */
+}
+
+.form-switch.form-switch-lg .form-check-input {
+  height: 1.7rem;
+  width: calc(3rem + 0.75rem);
+  border-radius: 4rem;
+}
+
+.form-check-input:checked {
+  background-color: #ffc107; /* Bootstrap warning yellow */
+  border-color: #ffc107; /* Match border color */
+}
+
+.floating-chatbot {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  background-color: #6931ed;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.floating-chatbot:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+}
+
+.floating-chatbot i {
+  font-size: 24px;
 }

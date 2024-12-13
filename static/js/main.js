@@ -133,7 +133,6 @@ window.onload = function () {
     const button = document.getElementById("getSelectedButton");
     const spinner = document.getElementById("buttonSpinner");
     const newsContainer = document.getElementById("newsContainer");
-
     try {
       // Show the spinner
       spinner.classList.remove("d-none");
@@ -160,7 +159,6 @@ window.onload = function () {
       const offset = 100; // Adjust this value as needed (e.g., 100px)
       const newsContainerPosition =
         newsContainer.getBoundingClientRect().top + window.pageYOffset - offset;
-
       // Scroll to the calculated position with a smooth effect
       window.scrollTo({ top: newsContainerPosition, behavior: "smooth" });
     } catch (error) {
@@ -259,12 +257,21 @@ window.onload = function () {
       }
     });
   }
+  function getBootstrapClass(percentage) {
+    if (percentage > 50) {
+      return "success"; // Green color for success
+    } else if (percentage >= 30) {
+      return "warning"; // Yellow color for warning
+    } else {
+      return "danger"; // Red color for danger
+    }
+  }
   // function that update model section with ai remmended news
   function updateAiRecommendationModalSection(getAiRecommendedNewsList) {
     const container = document.getElementById("aiRecommendedNewsContainer");
     container.innerHTML = "";
     getAiRecommendedNewsList.forEach((news) => {
-      var similarity_score = Math.floor(news.similarity_score * 100) 
+      var similarity_score = Math.floor(news.similarity_score * 100);
       container.innerHTML += `
                 <div class="col-md-4">
               <div class="card h-100">
@@ -280,9 +287,15 @@ window.onload = function () {
                     <span class="badge text-bg-secondary px-4 category-badge-tag">${
                       news.category
                     }</span>
-                    <div class="small mt-3">Similarity: (${similarity_score}%)</div>
-                    <div class="progress mt-1" role="progressbar" aria-label="Example 1px high" aria-valuenow="${similarity_score}" aria-valuemin="0" aria-valuemax="100" style="height: 1px">
-                      <div class="progress-bar" style="width: ${similarity_score}%"></div>
+                    <div class="small mt-3 text-${getBootstrapClass(
+                      similarity_score
+                    )}">Similarity: (<span class="text-${getBootstrapClass(
+        similarity_score
+      )}">${similarity_score}%</span>)</div>
+                    <div class="progress mt-1" role="progressbar" aria-label="Example 1px high" aria-valuenow="${similarity_score}" aria-valuemin="0" aria-valuemax="100" style="height: 2px">
+                      <div class="progress-bar bg-${getBootstrapClass(
+                        similarity_score
+                      )}" style="width: ${similarity_score}%"></div>
                     </div>
                 </div>
                 <div class="card-footer">
@@ -308,14 +321,11 @@ window.onload = function () {
     }
     return text;
   }
-
   async function getSimilarArticles(articleId) {
     const url = "/get_similar_articles"; // Adjust the URL to your server's address
-
     const requestData = {
       article_id: articleId,
     };
-
     try {
       const response = await fetch(url, {
         method: "POST", // POST method
@@ -324,13 +334,11 @@ window.onload = function () {
         },
         body: JSON.stringify(requestData), // Send the JSON request body
       });
-
       if (!response.ok) {
         const errorData = await response.json();
         console.error("Error:", errorData);
         return;
       }
-
       const data = await response.json();
       console.log("Similar Articles:", data.similar_articles);
       return data.similar_articles; // Return the similar articles if needed
@@ -338,6 +346,65 @@ window.onload = function () {
       console.error("Network error:", error);
     }
   }
+  async function getNewsByUserId(userId, maxReturnNews = 4) {
+    const baseUrl = "/"; // Replace with your Flask server URL
+    const endpoint = `get_news_by_user_id`;
+    const url = `${baseUrl}${endpoint}?user_id=${userId}&max_return_news=${maxReturnNews}`;
+    try {
+      const response = await fetch(url, {
+        method: "GET",
+      });
+      if (!response.ok) {
+        // Handle HTTP errors
+        const errorData = await response.json();
+        console.error(`Error: ${errorData.error}`);
+        return;
+      }
+      // Parse the response JSON
+      const articles = await response.json();
+      console.log(`News for User ${userId}:`, articles);
+      return articles;
+      // Process articles or update the UI
+      displayArticles(articles);
+    } catch (error) {
+      console.error(`Fetch failed: ${error.message}`);
+    }
+  }
+  // Example function to display articles in the console or UI
+  function displayArticles(articles) {
+    articles.forEach((article, index) => {
+      console.log(`Article ${index + 1}:`, article);
+    });
+  }
+  document.getElementById("login_btn").addEventListener("click", () => {
+    // spinner
+    const spinner = document.getElementById("modal_login_btn_spinner");
+
+      // Show the spinner
+      spinner.classList.remove("d-none");
+    const userId = document.getElementById("user_id_input").value.trim();
+    //U80234
+    getNewsByUserId(userId, 5).then(function (news) {
+      globalNewsData = news;
+      displayNews(news);
+      // Select the modal element
+      const loginModal = document.getElementById("loginModal");
+      
+      // Create a Bootstrap modal instance
+      const modalInstance = bootstrap.Modal.getInstance(loginModal) || new bootstrap.Modal(loginModal);
+      // hide spinner 
+      spinner.classList.add("d-none");
+      // hide moal
+      modalInstance.hide();
+      const newsContainer = document.getElementById("newsContainer");
+       // Scroll to the news section with an offset to show more space at the top
+       const offset = 100; // Adjust this value as needed (e.g., 100px)
+       const newsContainerPosition =
+         newsContainer.getBoundingClientRect().top + window.pageYOffset - offset;
+       // Scroll to the calculated position with a smooth effect
+       window.scrollTo({ top: newsContainerPosition, behavior: "smooth" });
+    });
+  });
   // Retrieve or create and return the unique number
   const uniqueNumber = getOrCreateUniqueNumber();
   console.log("Unique Number:", uniqueNumber);

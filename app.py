@@ -2,7 +2,8 @@ from flask import Flask, request, jsonify, render_template
 from news_category import NewsCategory
 import json
 import sys
-from recommender import Recommender
+from english_recommender import EnglishRecommender
+from arabic_recommender import ArabicRecommender
 
 sys.path.append("c:\\python310\\lib\\site-packages")
 from tinydb import TinyDB, Query # type: ignore
@@ -10,7 +11,8 @@ from tinydb import TinyDB, Query # type: ignore
 
 app = Flask(__name__)
 
-recommender = Recommender()
+en_recommender = EnglishRecommender()
+ar_recommender = ArabicRecommender()
 
 # Initialize TinyDB (stores data in a JSON file)
 db = TinyDB('db.json')
@@ -18,6 +20,22 @@ db = TinyDB('db.json')
 @app.route('/')
 def home():
     return render_template('index.html')
+
+@app.route('/ar')
+def home_ar():
+    return render_template('index_ar.html')
+
+@app.route('/admin')
+def admin():
+    return render_template('admin.html')
+
+@app.route('/get_insights', methods=['GET'])
+def get_insights():
+    try:
+        insights = en_recommender.get_insights()
+        return jsonify(insights), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/add_user', methods=['POST'])
 def add_user():
@@ -99,7 +117,7 @@ def get_similar_articles():
         article_id = data['article_id']
 
         # Call the similarity function
-        similar_articles = recommender.get_similar_articles(article_id)
+        similar_articles = en_recommender.get_similar_articles(article_id)
 
         # Return the response as JSON
         return jsonify({'article_id': article_id, 'similar_articles': similar_articles}), 200
@@ -107,6 +125,76 @@ def get_similar_articles():
         return jsonify({'error': str(e)}), 400
     except Exception as e:
         return jsonify({'error': 'An unexpected error occurred', 'details': str(e)}), 500
+
+@app.route('/get_ar_category', methods=['GET'])
+def get_ar_categor():
+    return jsonify(ar_recommender.get_arabic_category())
+
+@app.route('/get_ar_news_by_id', methods=['GET'])
+def get_news_by_id():
+    """
+    Route to fetch an Arabic news article by its ID.
+    Expects 'news_id' as a query parameter.
+    """
+    news_id = request.args.get('news_id', type=int)
+    if news_id is None:
+        return jsonify({"error": "news_id is required"}), 400
+
+    news_article = ar_recommender.get_arabic_news_by_id(news_id)
+    if news_article is None:
+        return jsonify({"error": f"News with ID {news_id} not found"}), 404
+
+    return jsonify(news_article.to_dict()), 200
+
+
+@app.route('/summarize_ar_news_by_id', methods=['GET'])
+def summarize_news_by_id():
+    """
+    Route to fetch and summarize an Arabic news article by its ID.
+    Expects 'news_id' as a query parameter.
+    """
+    news_id = request.args.get('news_id', type=int)
+    if news_id is None:
+        return jsonify({"error": "news_id is required"}), 400
+
+    summary = ar_recommender.summarize_arabic_new(news_id)
+    if summary is None:
+        return jsonify({"error": f"News with ID {news_id} not found or could not be summarized"}), 404
+
+    return jsonify({"news_id": news_id, "summary": summary}), 200
+
+
+@app.route('/get_ar_news_by_category', methods=['GET'])
+def get_news_by_category():
+    """
+    Route to fetch Arabic news articles by category.
+    Expects 'category_id' as a query parameter.
+    """
+    category_id = request.args.get('category_id', type=str)
+    max_return_news = request.args.get('max_return_news', default=4, type=int)
+
+    if category_id is None:
+        return jsonify({"error": "category_id is required"}), 400
+
+    articles = ar_recommender.get_latest_arabic_news_by_category(category_id, max_return_news)
+    if articles is None or articles.empty:
+        return jsonify({"error": f"No news found for category {category_id}"}), 404
+
+    return jsonify(articles.to_dict(orient="records")), 200
+
+@app.route('/get_news_by_user_id', methods=['GET'])
+def get_news_by_userId():
+    user_id = request.args.get('user_id', type=str)
+    max_return_news = request.args.get('max_return_news', default=4, type=int)
+    if user_id is None:
+        return jsonify({"error": "user_id is required"}), 400
+    
+    articles = en_recommender.get_user_recommendations(user_id, max_return_news)
+    
+    if articles is None or articles.empty:
+        return jsonify({"error": f"No news found for category {user_id}"}), 404
+
+    return jsonify(articles.to_dict(orient="records")), 200
 
 if __name__ == '__main__':
     app.run(debug=True)
